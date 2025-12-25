@@ -130,36 +130,3 @@ def augment_with_valid_labels(X, y, img_size, latent_dim=100, device=None):
         y_list.append(np.full(augment_per_class, cls))
 
     return np.vstack(X_list), np.hstack(y_list)
-
-
-# ========================
-# 4. 使用示例
-# ========================
-if __name__ == "__main__":
-    # 加载 Digits
-    from sklearn.datasets import load_digits
-
-    digits = load_digits()
-    X = digits.data.astype(np.float32) / 16.0  # [0,1]
-    y = digits.target
-
-    # 划分训练集（仅用训练集训练 GAN）
-    from sklearn.model_selection import train_test_split
-
-    X_train, X_test, y_train, y_test = train_test_split(
-        X, y, test_size=0.2, stratify=y, random_state=42
-    )
-
-    # 生成带有效标签的增强数据
-    X_aug, y_aug = augment_with_valid_labels(
-        X_train, y_train,
-        img_size=8,
-        device=torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    )
-
-    print(f"原始训练集: {X_train.shape} → 增强后: {X_aug.shape}")
-    print(f"标签范围: {y_aug.min()} ~ {y_aug.max()}")  # 应为 0~9
-    print(f"每类样本数: {np.bincount(y_aug)}")
-
-    # 现在 X_aug, y_aug 可直接用于监督训练！
-    # 例如：train_cnn(X_aug, y_aug, ...)
