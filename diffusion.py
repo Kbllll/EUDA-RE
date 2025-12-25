@@ -162,35 +162,3 @@ def augment_with_diffusion(X, y, img_size, device="cpu"):
         y_list.append(np.full(len(X_cls), cls))
 
     return np.vstack(X_list), np.hstack(y_list)
-
-
-# ========================
-# 5. 使用示例
-# ========================
-if __name__ == "__main__":
-    # 加载 Digits
-    from sklearn.datasets import load_digits
-
-    digits = load_digits()
-    X = digits.data.astype(np.float32) / 16.0  # [0,1]
-    y = digits.target
-
-    # 划分训练集
-    from sklearn.model_selection import train_test_split
-
-    X_train, X_test, y_train, y_test = train_test_split(
-        X, y, test_size=0.2, stratify=y, random_state=42
-    )
-
-    # 设置设备
-    device = "cuda" if torch.cuda.is_available() else "cpu"
-    print(f"使用设备: {device}")
-
-    # 生成增强数据
-    X_aug, y_aug = augment_with_diffusion(
-        X_train, y_train,
-        img_size=8,
-        device=device
-    )
-
-    print(f"增强后数据形状: {X_aug.shape}")
