@@ -231,39 +231,3 @@ class MyDataSet(Dataset):
         subset = MyDataSet(x, y)
         subset.link(indices, self)
         return subset
-
-# ========================
-# 示例：加载并打印信息
-# ========================
-if __name__ == "__main__":
-    datasets = ["Digits", "ORL32", "Yale32"]
-
-    for name in datasets:
-        print(f"\n{'=' * 50}")
-        print(f"📥 加载 {name}...")
-        try:
-            X, y, img_shape, num_classes = load_dataset(name)
-            print(f"✅ 成功!")
-            print(f"   - 样本数: {X.shape[0]}")
-            print(f"   - 特征维数: {X.shape[1]}")
-            print(f"   - 类别数: {name}")
-            print(f"   - 像素范围: [{X.min():.3f}, {X.max():.3f}]")
-        except Exception as e:
-            print(f"❌ 失败: {e}")
-
-
-    X, y, img_shape, num_classes = load_dataset("Digits")  # 或 "ORL32", "Yale32"
-
-    # 按类别均匀划分：80% 训练，20% 测试
-    X_train, X_test, y_train, y_test = train_test_split(
-    X, y,
-    test_size=0.2,
-    stratify=y,          # ✅ 关键：按 y 分层
-    random_state=42,     # 保证可复现
-    shuffle=True
-    )
-
-    # 验证每个类别的分布是否均匀
-    from collections import Counter
-    print("训练集类别分布:", sorted(Counter(y_train).items()))
-    print("测试集类别分布:", sorted(Counter(y_test).items()))
